@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AudioSort</title>
+    <link rel="stylesheet" type="text/css" href="../src/assets/stylesheets/reset.css" />
+    <link rel="stylesheet" type="text/css" href="../src/assets/stylesheets/visualizer.css" />
+    <script type="application/javascript" src="./main.js"></script>
+
+</head>
+<body>
+    <audio class="song" src="../src/assets/songs/Said The Sky - Show & Tell.mp3" controls></audio>
+    <div class="track-title">I am a Song</div>
+
+    <div class="visualizer-container">
+        <div class="visualizer-container-bar">
+
+        </div>
+    </div>
+    <!-- <script>
+        (function() {
+            // get audio element tag
+            const audio = document.querySelector("audio"); 
+            // craete audio context
+            const ctx = new AudioContext();
+            //create audio source
+            const audioSource = ctx.createMediaElementSource(audio);
+            //create analyzer
+            const analyzer = ctx.createAnalyser();
+            //connect source to analuzer and back to context's destination
+            audioSource.connect(analyzer);
+            audioSource.connect(ctx.destination);
+            // print frequency
+            const frequencyData = new Uint8Array(analyzer.frequencyBinCount)
+            analyzer.getByteFrequencyData(frequencyData);
+            console.log("frequencyData", frequencyData);
+            // create set of predfined
+            // audio.volume = 0.25
+            // audio.play();
+            
+        }) ();
+    </script> -->
+
+</body>
+</html>
