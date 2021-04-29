@@ -1,0 +1,32 @@
+.background {
+	position: absolute;
+	background-color: black;
+}
+
+.visualizer-container {
+	position: absolute;
+
+	bottom: 450px;
+	right: 0;
+	left: 0;
+
+	text-align: center;
+}
+#canvas {
+	position: fixed;
+	background-color: black;
+	justify-content: center;
+	align-items: center;
+
+	/* width: 80%;
+	/* height: 100%; */
+	/* margin-left: auto; */
+	/* margin-right: auto;
+    display: block */
+}
+
+#audio {
+	display: block;
+	position: relative;
+	width: 100%;
+}
