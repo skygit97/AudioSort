@@ -53,7 +53,7 @@ button {
     width: auto;
     overflow: visible;
 
-    background: transparent;
+    background: white;
 
     /* inherit font & color from ancestor */
     color: inherit;

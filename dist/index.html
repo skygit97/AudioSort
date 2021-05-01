@@ -4,38 +4,42 @@
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="icon" type="image/x-icon" href="./assets/favicon.ico" />
+
 		<title>AudioSort</title>
+
+		<!-- css stylesheets -->
 		<link
 			rel="stylesheet"
-			type="text/css"
-			href="./assets/stylesheets/reset.css"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
 		/>
-		<link
-			rel="stylesheet"
-			type="text/css"
-			href="./assets/stylesheets/visualizer.css"
-		/>
+		<link rel="stylesheet" href="./assets/stylesheets/reset.css" />
+		<link rel="stylesheet" href="./assets/stylesheets/visualizer.css" />
+
 		<script type="application/javascript" src="./main.js"></script>
 	</head>
 	<body>
-		<!-- <audio
-			class="song"
-			src="./assets/songs/Said The Sky - Show & Tell.mp3"
+		<h1>AudioSort</h1>
+		<div class="canvas-container">
+			<canvas id="top-canvas"></canvas>
+			<canvas id="bottom-canvas"></canvas>
+    </div>
+
+		<!-- <audio id="audio" preload="none" tabindex="0" controls>
+			<source
+				src="../dist/assets/songs/Said The Sky - Show & Tell.mp3"
+				data-track-number="1"
+			/>
+			<source
+				src="../dist/assets/songs/Cybergirlfriend - Every Little Thing.mp3"
+				data-track-number="2"
+			/>
+		</audio> -->
+
+		<audio
+			id="audio"
+			src="../dist/assets/songs/Cybergirlfriend - Every Little Thing.mp3"
 			controls
-		></audio> -->
-
-		<!-- <div id="content">
-			<input type="file" id="input-file" accept="audio/*" />
-			<canvas id="canvas"></canvas>
-			<audio id="audio" controls></audio>
-		</div> -->
-
-		<!-- <div id="content"> -->
-		<div class="background"></div>
-		<div class="visualizer-container">
-			<audio id="audio" controls></audio>
-			<!-- </div> -->
-			<canvas id="canvas"></canvas>
-		</div>
+		></audio>
 	</body>
 </html>

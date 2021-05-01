@@ -1,66 +1,141 @@
+import VisualizerSample from "./components/audi_analyser";
+
 window.addEventListener("load", () => {
-	const canvas = document.getElementById("canvas");
-	canvas.width = window.innerWidth;
-	canvas.height = window.innerHeight;
-	const WIDTH = canvas.width;
-	const HEIGHT = canvas.height;
-	const canvasCtx = canvas.getContext("2d");
-
+	const topCanvas = document.getElementById("top-canvas");
+	const bottomCanvas = document.getElementById("bottom-canvas");
 	const audio = document.getElementById("audio");
-	audio.src = "../dist/assets/songs/Said The Sky - Show & Tell.mp3";
-	const audioCtx = new (AudioContext || webkitAudioContext)();
-	const analyser = audioCtx.createAnalyser();
 
+	const topCanvasCtx = topCanvas.getContext("2d");
+	const bottomCanvasCtx = bottomCanvas.getContext("2d");
+
+	const WIDTH = topCanvas.width;
+	const HEIGHT = bottomCanvas.height;
+	const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+	const analyser = audioCtx.createAnalyser();
 	const source = audioCtx.createMediaElementSource(audio);
+
 	source.connect(analyser);
 	analyser.connect(audioCtx.destination);
-
-	analyser.fftSize = 256;
+	analyser.fftSize = 128;
 	const bufferLength = analyser.frequencyBinCount;
-	console.log(bufferLength);
+
 	const dataArray = new Uint8Array(bufferLength);
 
 	analyser.getByteTimeDomainData(dataArray);
 
-	canvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
+	let barHeight;
+	let x = 0;
 
-	audio.play();
-	function animate() {
-		requestAnimationFrame(animate);
+	let animateID;
+	const draw = () => {
+		animateID = requestAnimationFrame(draw);
 		analyser.getByteFrequencyData(dataArray);
 
-		canvasCtx.fillStyle = "rgb(0, 0, 0)";
-		canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
+		topCanvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
+		bottomCanvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
 
-		let barWidth = (WIDTH / bufferLength) ;
+		topCanvasCtx.fillStyle = "rgb(0, 0, 0)";
+		bottomCanvasCtx.fillStyle = "rgb(0, 0, 0)";
 
-		let x = 0;
+		topCanvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
+		bottomCanvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
+
+		let barWidth = WIDTH / bufferLength;
+		x = 0;
+
 		for (let i = 0; i < bufferLength; i++) {
-			let barHeight = dataArray[i] / 1.5;
+			barHeight = dataArray[i];
+			let y = HEIGHT - barHeight / 2;
 
-			const gradient = canvasCtx.createLinearGradient(0, 0, WIDTH, 0);
+			const gradient =
+				topCanvasCtx.createLinearGradient(0, 0, WIDTH, 0) &&
+				bottomCanvasCtx.createLinearGradient(0, 0, WIDTH, 0);
 			gradient.addColorStop(0, "red");
-			gradient.addColorStop(0.25, "orange");
-			gradient.addColorStop(0.3, "yellow");
-			gradient.addColorStop(0.5, "green");
-			gradient.addColorStop(0.75, "blue");
-			gradient.addColorStop(0.9, "purple");
-			// gradient.addColorStop(0.75, "purple");
+			gradient.addColorStop(0.16, "orange");
+			gradient.addColorStop(0.32, "yellow");
+			gradient.addColorStop(0.48, "green");
+			gradient.addColorStop(0.64, "blue");
+			gradient.addColorStop(0.8, "purple");
 			gradient.addColorStop(1, "red");
-			canvasCtx.fillStyle = gradient;
 
-			// canvasCtx.fillStyle = gradient
-			// canvasCtx.fillStyle = "rgb(" + 450 + "," + 255 + "," + 128 + ")";
-			canvasCtx.fillRect(x, HEIGHT - barHeight / 2, barWidth, barHeight / 2);
+			topCanvasCtx.fillStyle = gradient;
+			bottomCanvasCtx.fillStyle = gradient;
 
-			// canvasCtx.fillStyle = gradient;
+			topCanvasCtx.fillRect(x, y, barWidth, barHeight / 2);
+			bottomCanvasCtx.fillRect(x, 0, barWidth, barHeight / 2);
 
-			// canvasCtx.fillStyle = "rgb(" + (barHeight + 10) + ",30,50)";
-			// canvasCtx.fillRect(x, HEIGHT - barHeight / 1.5, barWidth, barHeight);
-
-			x += barWidth + 1;
+			x += barWidth + 2.5;
 		}
-	}
+	};
+	draw();
 
-	animate();
+	function bubbleSort(arr) {
+		function sort() {
+			let virtualArr = [arr.slice()];
+			for (var i = 0; i < arr.length; i++) {
+				var done = true;
+				for (var j = 0; j < max - i; j++) {
+					if (arr[j] > arr[j + 1]) {
+						var temp = arr[j];
+						arr[j] = arr[j + 1];
+						arr[j + 1] = temp;
+						done = false;
+						virtualArr.push(arr.slice());
+					}
+				}
+				if (done) {
+					break;
+				}
+			}
+			return virtualArr;
+		}
+
+		function darw(dataArray) {
+			topCanvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
+
+			topCanvasCtx.fillStyle = "rgb(0, 0, 0)";
+
+			topCanvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
+
+			let barWidth = WIDTH / bufferLength;
+			let x = 0;
+
+			for (let i = 0; i < bufferLength; i++) {
+				barHeight = dataArray[i];
+				let y = HEIGHT - barHeight / 2;
+
+				const gradient = topCanvasCtx.createLinearGradient(0, 0, WIDTH, 0);
+				gradient.addColorStop(0, "red");
+				gradient.addColorStop(0.16, "orange");
+				gradient.addColorStop(0.32, "yellow");
+				gradient.addColorStop(0.48, "green");
+				gradient.addColorStop(0.64, "blue");
+				gradient.addColorStop(0.8, "purple");
+				gradient.addColorStop(1, "red");
+
+				topCanvasCtx.fillStyle = gradient;
+
+				topCanvasCtx.fillRect(x, y, barWidth, barHeight / 2);
+
+				x += barWidth;
+			}
+		}
+
+		// animation
+		function animation() {
+			// Call the sort method to return an array containing the contents of each step
+			var virtualArr = sort();
+			var interval = 2000;
+			// Traverse the resulting array, and call the darw method every 500ms to draw a step
+			virtualArr.forEach((item) => {
+				setTimeout(() => darw(item), interval);
+			});
+		}
+
+		animation();
+	}
+	audio.addEventListener("pause", () => {
+		cancelAnimationFrame(animateID);
+		bubbleSort(dataArray);
+	});
 });
