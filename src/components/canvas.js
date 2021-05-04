@@ -1,60 +1,86 @@
-export default class AudioVisualiser {
-	constructor(canvas) {
-		this.canvasCtx = canvas.getContext("2d");
-		this.width = this.canvasCtx.width;
-		this.height = this.canvasCtx.height;
+import React, { createRef } from "react";
+
+class Canvas extends React.Component {
+	constructor(props) {
+		super(props);
+		this.audio = new Audio(
+			"../../dist/assets/songs/Cybergirlfriend - Every Little Thing.mp3"
+		);
+		this.canvas = createRef();
 	}
 
-  play() {
-    this.playing = true;
-    this.animate();
-  }
+	componentDidMount() {
+		this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+		this.source = this.audioCtx.createMediaElementSource(this.audio);
+
+		this.analyser = this.audioCtx.createAnalyser();
+		this.source.connect(this.analyser);
+		this.analyser.connect(this.audioCtx.destination);
+		this.dataArray = new Uint8Array(this.analyser.frequencyBinCount);
+	}
+
+	togglePlay() {
+		const { audio } = this;
+		if (audio.paused) {
+			audio.play();
+			this.animateID = requestAnimationFrame(() => this.animate);
+		} else {
+			audio.pause();
+			cancelAnimationFrame(this.animateID);
+		}
+	}
 
 	animate() {
-		const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-		const analyser = audioCtx.createAnalyser();
-		const source = audioCtx.createMediaElementSource(audio);
-		const dataArray = new Uint8Array(bufferLength);
-		analyser.getByteTimeDomainData(dataArray);
-		source.connect(analyser);
-		analyser.connect(audioCtx.destination);
-		analyser.fftSize = 128;
-		const bufferLength = analyser.frequencyBinCount;
+		this.draw(this.canvas.current);
+    	this.analyser.getByteTimeDomainData(this.dataArray);
 
-    if (this.playing) {
-      this.draw();
-    }
+		this.animateID = requestAnimationFrame(this.animate);
+	}
 
+	draw(canvas) {
+		let canvasCtx = canvas.getContext("2d");
 
+		const WIDTH = Math.floor(this.canvas.clientWidth);
+		const HEIGHT = this.canvas.clientHeight;
+		const barWidth = 2;
+		let x;
+		let y;
 
-  }
-	draw() {
-		requestAnimationFrame(this.animate.bind(this));
-			this.canvasCtx.clearRect(0, 0, this.width, this.height);
-			this.canvasCtx.fillStyle = "rgb(0, 0, 0)";
-			for (let i = 0; i < bufferLength; i++) {
-				let barHeight = dataArray[i];
-				let y = this.height - barHeight / 2;
-				const gradient = this.canvasCtx.createLinearGradient(
-					0,
-					0,
-					this.width,
-					0
-				);
-				gradient.addColorStop(0, "red");
-				gradient.addColorStop(0.16, "orange");
-				gradient.addColorStop(0.32, "yellow");
-				gradient.addColorStop(0.48, "green");
-				gradient.addColorStop(0.64, "blue");
-				gradient.addColorStop(0.8, "purple");
-				gradient.addColorStop(1, "red");
+		for (let i = 0; i < 100; i++) {
+			let barHeight = this.dataArray[i] / 2;
+			x = i * 3;
+			y = HEIGHT - barHeight;
 
-				this.canvasCtx.fillStyle = gradient;
+			const gradient = canvasCtx.createLinearGradient(0, 0, WIDTH, HEIGHT);
+			gradient.addColorStop(0, "red");
+			gradient.addColorStop(1 / 6, "orange");
+			gradient.addColorStop(2 / 6, "yellow");
+			gradient.addColorStop(3 / 6, "green");
+			gradient.addColorStop(4 / 6, "blue");
+			gradient.addColorStop(5 / 6, "purple");
+			gradient.addColorStop(1, "red");
 
-				this.canvasCtx.fillRect(x, y, barWidth, barHeight / 2);
+			canvasCtx.fillStyle = gradient;
 
-				x += barWidth;
-			}
-		};
-	
+			canvasCtx.fillRect(x, y, barWidth, barHeight);
+		}
+	}
+
+	componentWillUnmount() {
+		cancelAnimationFrame(this.animateID);
+		this.analyser.disconnect();
+		this.source.disconnect();
+	}
+
+	render() {
+		return (
+			<>
+				<canvas ref={this.canvas} />
+				<button onClick={() => this.togglePlay()}>Play/Pause</button>
+				{/* <audio id="audio" controls onClick={() => this.togglePlay()}></audio> */}
+			</>
+		);
+	}
 }
+
+export default Canvas;

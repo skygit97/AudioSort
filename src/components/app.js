@@ -1,10 +1,12 @@
 import React from "react";
-import AudioAnalyser from "./audio_analyser/audio_analyser";
+import Canvas from "./canvas";
 
 const App = () => {
-	<div className="app">
-		<AudioAnalyser />
-	</div>;
+	return (
+		<div className="app">
+			<Canvas />
+		</div>
+	);
 };
 
 export default App;

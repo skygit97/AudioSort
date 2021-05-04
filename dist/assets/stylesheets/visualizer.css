@@ -9,7 +9,7 @@ h1 {
   font-size: 50px;
 }
 
-.canvas-container {
+/* .canvas-container {
 	position: absolute;
   display: flex;
   flex-direction: column;
@@ -17,19 +17,43 @@ h1 {
 	left: 10%;
 	margin-top: -100px;
 	width: 80%;
-}
+} */
 
-.canvas-container > canvas {
-  margin: 1.5px;
+/* .canvas-container > canvas {
   height: 100px;
+  background-color: white;
 }
 
 .canvas-container > #top-canvas {
+  margin-bottom: 5px;
+}
+
+.canvas-container > #bottom-canvas {
+  margin-top: 5px;
+} */
+#canvas {
+	position: absolute;
+	top: 45%;
+	left: 10%;
+	margin-top: -100px;
+	width: 80%;
+  height: 300px;
+
+}
+
+/* hr {
+  height: 2.5px;
+  background: linear-gradient(to right, transparent 50%, black 50%), linear-gradient(to right, red, orange, yellow, green, blue, purple, red);
+  background-size: 18px 2px, 100% 6px;
+} */
+
+
+/* .canvas-container > #top-canvas {
   padding-bottom: 3px;
   border-bottom: 1px solid rgba(255, 0, 0, .5);
 
   border-image: linear-gradient(to right, red, orange, yellow,green, blue, purple, red) .5 stretch;
-}
+} */
 
 #audio {
 	position: fixed;

@@ -1,70 +1,73 @@
-import VisualizerSample from "./components/audi_analyser";
-
+import AudioVisualise from "./audio_player";
 window.addEventListener("load", () => {
-	const topCanvas = document.getElementById("top-canvas");
-	const bottomCanvas = document.getElementById("bottom-canvas");
-	const audio = document.getElementById("audio");
+	const canvas = document.getElementById("canvas");
+	const canvasCtx = canvas.getContext("2d");
 
-	const topCanvasCtx = topCanvas.getContext("2d");
-	const bottomCanvasCtx = bottomCanvas.getContext("2d");
+	// increase canvas resolution
+	canvas.width = Math.floor(canvas.clientWidth);
+  console.log(canvas.width);
+	canvas.height = canvas.clientHeight;
+	const WIDTH = canvas.width;
+  console.log(WIDTH);
+	const HEIGHT = canvas.height;
 
-	const WIDTH = topCanvas.width;
-	const HEIGHT = bottomCanvas.height;
+	// create canvas gradient
+	const gradient = canvasCtx.createLinearGradient(0, 0, WIDTH, 0);
+	gradient.addColorStop(0, "red");
+	gradient.addColorStop(0.16, "orange");
+	gradient.addColorStop(0.32, "yellow");
+	gradient.addColorStop(0.48, "green");
+	gradient.addColorStop(0.64, "blue");
+	gradient.addColorStop(0.8, "purple");
+	gradient.addColorStop(1, "red");
+
+	// create canvas mid line
+	canvasCtx.beginPath();
+	canvasCtx.setLineDash([7]);
+	canvasCtx.moveTo(0, HEIGHT / 2);
+	canvasCtx.lineTo(WIDTH, HEIGHT / 2);
+	canvasCtx.lineWidth = 2;
+	canvasCtx.strokeStyle = gradient;
+	canvasCtx.stroke();
+
+	// create audio analyser node
 	const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 	const analyser = audioCtx.createAnalyser();
-	const source = audioCtx.createMediaElementSource(audio);
 
+	// connect node to audio source
+	const audio = document.getElementById("audio");
+	const source = audioCtx.createMediaElementSource(audio);
 	source.connect(analyser);
-	analyser.connect(audioCtx.destination);
+	source.connect(audioCtx.destination);
+
+	// caputure audio data
 	analyser.fftSize = 128;
 	const bufferLength = analyser.frequencyBinCount;
-
+  console.log(bufferLength)
 	const dataArray = new Uint8Array(bufferLength);
 
-	analyser.getByteTimeDomainData(dataArray);
-
-	let barHeight;
-	let x = 0;
-
 	let animateID;
+
 	const draw = () => {
-		animateID = requestAnimationFrame(draw);
+    animateID = requestAnimationFrame(draw);
 		analyser.getByteFrequencyData(dataArray);
-
-		topCanvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
-		bottomCanvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
-
-		topCanvasCtx.fillStyle = "rgb(0, 0, 0)";
-		bottomCanvasCtx.fillStyle = "rgb(0, 0, 0)";
-
-		topCanvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
-		bottomCanvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
-
+    
+		canvasCtx.clearRect(0, 0, WIDTH, HEIGHT / 2 - 4);
+		canvasCtx.clearRect(0, 4 + HEIGHT / 2, WIDTH, HEIGHT / 2);
+    
+    // let numBars = 100;
+    let x = 0;
 		let barWidth = WIDTH / bufferLength;
-		x = 0;
-
 		for (let i = 0; i < bufferLength; i++) {
-			barHeight = dataArray[i];
-			let y = HEIGHT - barHeight / 2;
+			let barHeight = dataArray[i] / 2;
+			let y1 = HEIGHT / 2 - barHeight - 5;
+			let y2 = (HEIGHT - 2) / 2 + 5;
 
-			const gradient =
-				topCanvasCtx.createLinearGradient(0, 0, WIDTH, 0) &&
-				bottomCanvasCtx.createLinearGradient(0, 0, WIDTH, 0);
-			gradient.addColorStop(0, "red");
-			gradient.addColorStop(0.16, "orange");
-			gradient.addColorStop(0.32, "yellow");
-			gradient.addColorStop(0.48, "green");
-			gradient.addColorStop(0.64, "blue");
-			gradient.addColorStop(0.8, "purple");
-			gradient.addColorStop(1, "red");
+			canvasCtx.fillStyle = gradient;
 
-			topCanvasCtx.fillStyle = gradient;
-			bottomCanvasCtx.fillStyle = gradient;
-
-			topCanvasCtx.fillRect(x, y, barWidth, barHeight / 2);
-			bottomCanvasCtx.fillRect(x, 0, barWidth, barHeight / 2);
-
-			x += barWidth + 2.5;
+			canvasCtx.fillRect(x, y1, barWidth, barHeight);
+			canvasCtx.fillRect(x, y2, barWidth, barHeight);
+			x += barWidth + 1;
 		}
 	};
 	draw();
@@ -74,7 +77,7 @@ window.addEventListener("load", () => {
 			let virtualArr = [arr.slice()];
 			for (var i = 0; i < arr.length; i++) {
 				var done = true;
-				for (var j = 0; j < max - i; j++) {
+				for (var j = 0; j < arr.length - i; j++) {
 					if (arr[j] > arr[j + 1]) {
 						var temp = arr[j];
 						arr[j] = arr[j + 1];
@@ -91,33 +94,21 @@ window.addEventListener("load", () => {
 		}
 
 		function darw(dataArray) {
-			topCanvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
-
-			topCanvasCtx.fillStyle = "rgb(0, 0, 0)";
-
-			topCanvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
+			canvasCtx.clearRect(0, 0, WIDTH, HEIGHT / 2 - 4);
+			canvasCtx.clearRect(0, 4 + HEIGHT / 2, WIDTH, HEIGHT / 2);
 
 			let barWidth = WIDTH / bufferLength;
 			let x = 0;
-
 			for (let i = 0; i < bufferLength; i++) {
-				barHeight = dataArray[i];
-				let y = HEIGHT - barHeight / 2;
+				let barHeight = dataArray[i] /2 ;
+				let y1 = HEIGHT / 2 - barHeight - 5;
+				let y2 = (HEIGHT - 2) / 2 + 5;
 
-				const gradient = topCanvasCtx.createLinearGradient(0, 0, WIDTH, 0);
-				gradient.addColorStop(0, "red");
-				gradient.addColorStop(0.16, "orange");
-				gradient.addColorStop(0.32, "yellow");
-				gradient.addColorStop(0.48, "green");
-				gradient.addColorStop(0.64, "blue");
-				gradient.addColorStop(0.8, "purple");
-				gradient.addColorStop(1, "red");
+				canvasCtx.fillStyle = gradient;
 
-				topCanvasCtx.fillStyle = gradient;
-
-				topCanvasCtx.fillRect(x, y, barWidth, barHeight / 2);
-
-				x += barWidth;
+				canvasCtx.fillRect(x, y1, barWidth, barHeight);
+				canvasCtx.fillRect(x, y2, barWidth, barHeight);
+				x += barWidth + 1;
 			}
 		}
 
@@ -125,7 +116,7 @@ window.addEventListener("load", () => {
 		function animation() {
 			// Call the sort method to return an array containing the contents of each step
 			var virtualArr = sort();
-			var interval = 2000;
+			var interval = 1000;
 			// Traverse the resulting array, and call the darw method every 500ms to draw a step
 			virtualArr.forEach((item) => {
 				setTimeout(() => darw(item), interval);
