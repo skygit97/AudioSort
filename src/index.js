@@ -1,4 +1,3 @@
-import AudioVisualise from "./audio_player";
 window.addEventListener("load", () => {
 	const canvas = document.getElementById("canvas");
 	const canvasCtx = canvas.getContext("2d");
