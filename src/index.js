@@ -69,7 +69,7 @@ window.addEventListener("load", () => {
 			canvasCtx.fillRect(x, y2, barWidth, barHeight);
 			x += barWidth + 1;
 		}
-	};
+	}; 
 	draw();
 
 	function bubbleSort(arr) {
